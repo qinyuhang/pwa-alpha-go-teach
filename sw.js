@@ -11,6 +11,9 @@ var filesToCache = [
   'dist/fonts/Mikro-Regular.woff2',
   'dist/fonts/Mikro-Light.woff2',
   'dist/files/book.sgf',
+  'dist/js/main.js',
+  'dist/js/vendor/wgo.js',
+  'dist/img/board-background.jpg'
 ];
 
 self.addEventListener('install', function(e) {
@@ -19,7 +22,7 @@ self.addEventListener('install', function(e) {
     caches.open(cacheName).then(function(cache) {
       console.log('[ServiceWorker] Caching app shell');
       return cache.addAll(filesToCache);
-    })
+    }).then(() => self.skipWaiting())
   );
 });
 
@@ -47,56 +50,17 @@ self.addEventListener('activate', function(e) {
    */
   return self.clients.claim();
 });
-
-self.addEventListener('fetch', function(event) {
-  if (event.request.method === 'GET') {
-    var urlWithoutIgnoredParameters = stripIgnoredUrlParameters(event.request.url,
-      IgnoreUrlParametersMatching);
-
-    var cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
-    var directoryIndex = 'index.html';
-    if (!cacheName && directoryIndex) {
-      urlWithoutIgnoredParameters = addDirectoryIndex(urlWithoutIgnoredParameters, directoryIndex);
-      cacheName = AbsoluteUrlToCacheName[urlWithoutIgnoredParameters];
-    }
-
-    var navigateFallback = '';
-    // Ideally, this would check for event.request.mode === 'navigate', but that is not widely
-    // supported yet:
-    // https://code.google.com/p/chromium/issues/detail?id=540967
-    // https://bugzilla.mozilla.org/show_bug.cgi?id=1209081
-    if (!cacheName && navigateFallback && event.request.headers.has('accept') &&
-        event.request.headers.get('accept').includes('text/html') &&
-        /* eslint-disable quotes, comma-spacing */
-        isPathWhitelisted([], event.request.url)) {
-        /* eslint-enable quotes, comma-spacing */
-      var navigateFallbackUrl = new URL(navigateFallback, self.location);
-      cacheName = AbsoluteUrlToCacheName[navigateFallbackUrl.toString()];
-    }
-
-    if (cacheName) {
-      event.respondWith(
-        // Rely on the fact that each cache we manage should only have one entry, and return that.
-        caches.open(cacheName).then(function(cache) {
-          return cache.keys().then(function(keys) {
-            return cache.match(keys[0]).then(function(response) {
-              if (response) {
-                return response;
-              }
-              // If for some reason the response was deleted from the cache,
-              // raise and exception and fall back to the fetch() triggered in the catch().
-              throw Error('The cache ' + cacheName + ' is empty.');
-            });
-          });
-        }).catch(function(e) {
-          console.warn('Couldn\'t serve response for "%s" from cache: %O', event.request.url, e);
-          return fetch(event.request);
-        })
-      );
-    }
-  }
-});
-
+self.addEventListener('fetch', function(e) {
+  console.log('[ServiceWorker] Fetch', e.request.url);
+  e.respondWith(
+    caches.match(e.request).then(function(response) {
+      if (response != null) {
+        return response
+      }
+      return fetch(e.request.url)
+    })
+  )
+})
 
 
 
