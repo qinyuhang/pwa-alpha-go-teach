@@ -12,7 +12,9 @@ var filesToCache = [
   'dist/files/book.sgf',
   'dist/js/main.js',
   'dist/js/vendor/wgo.js',
-  'dist/img/board-background.jpg'
+  'dist/img/board-background.jpg',
+  'sw.js',
+  'manifest.json'
 ];
 
 self.addEventListener('install', function(e) {
