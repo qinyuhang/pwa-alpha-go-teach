@@ -1,8 +1,7 @@
 var dataCacheName = 'AlphaGo-Teach-Data-v0.1';
 var cacheName = 'AlphaGo-Teach-v0.1';
 var filesToCache = [
-  '/',
-  '/index.html',
+  'index.html',
   'dist/img/goboard.png',
   'dist/css/main.css',
   'dist/img/icons/logo-text.svg',
