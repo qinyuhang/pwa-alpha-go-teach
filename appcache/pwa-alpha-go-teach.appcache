@@ -16,4 +16,5 @@ NETWORK:
 *
 
 FALLBACK
-https://welkin.online/playground/pwa-alpha-go-teach /index.html
+https://welkin.online/playground/pwa-alpha-go-teach index.html
+https://welkin.online/playground/pwa-alpha-go-teach/dist/files/book.sgf dist/files/book.sgf
