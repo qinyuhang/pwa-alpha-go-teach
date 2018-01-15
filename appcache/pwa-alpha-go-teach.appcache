@@ -1,0 +1,19 @@
+CACHE MANIFEST
+#2018-1-15 14:48:48
+#html
+https://welkin.online/playground/pwa-alpha-go-teach
+#img
+dist/img/icons/logo-text.svg
+#css
+dist/css/main.css
+#js
+dist/js/vendor/wgo.js
+dist/js/main.js
+
+dist/files/book.sgf
+
+NETWORK:
+*
+
+FALLBACK
+https://welkin.online/playground/pwa-alpha-go-teach /index.html
